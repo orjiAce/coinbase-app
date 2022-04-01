@@ -54,13 +54,16 @@ const walletConnectOptions: WalletConnectProviderProps = {
   //renderQrcodeModal: Qrcode,
 };
 
+Moralis.initialize(appId);
 export const Providers = ({children}: ProvidersProps) => {
   const [value, setValue] = useState();
+
+
   return (
     <WalletConnectProvider {...walletConnectOptions}>
       <MoralisProvider
-        appId={'YsdUIDEwgmMUHft7KEYbeMoaHIELhbzUHVUADWBA'}
-        serverUrl={'https://cp3vjnhntsoz.usemoralis.com:2053/server'}
+        appId={appId}
+        serverUrl={serverUrl}
         environment={environment}>
         <MoralisDappProvider>
           <ApplicationProvider {...eva} theme={eva.light}>

@@ -1,7 +1,7 @@
 {
-  "name": "EthereumRNBoilerplate",
+  "name": "rn-coinbase-wallet",
   "version": "1.0.0",
-  "private": true,
+  "private": false,
   "keywords": [
     "react",
     "react-native",

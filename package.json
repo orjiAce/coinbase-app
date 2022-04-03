@@ -66,6 +66,7 @@
     "react-native-emoji-selector": "^0.2.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-get-random-values": "1.5.0",
+    "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-localhost": "1.0.0",
     "react-native-os": "^1.0.1",
     "react-native-paper": "^4.9.2",

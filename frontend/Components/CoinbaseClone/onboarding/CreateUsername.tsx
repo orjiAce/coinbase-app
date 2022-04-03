@@ -1,4 +1,4 @@
-import React, { useState, createRef, useRef, useEffect } from "react";
+import React, {useState, createRef, useRef, useEffect, useLayoutEffect, useCallback} from "react";
 import {
     StyleSheet,
     TextInput,
@@ -8,9 +8,9 @@ import {
     TouchableOpacity,
     KeyboardAvoidingView,
     SafeAreaView,
-    Image, Platform
+    Image, Platform, ActivityIndicator
 } from "react-native";
-
+import Icon from 'react-native-vector-icons/Ionicons';
 import {
     useMoralis,
 } from "react-moralis";
@@ -18,9 +18,24 @@ import {
 const KEYBOARD_VERTICAL_OFFSET = 60 + StatusBar.currentHeight;
 
 import Web3 from "web3";
+import {fontPixel, heightPixel} from "../../../utils/normalize";
+import {KeyboardAwareScrollView} from "react-native-keyboard-aware-scroll-view";
 
-const CreateUsername = ({ navigation }) => {
-    const { Moralis } = useMoralis();
+const CreateUsername = ({navigation}) => {
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <TouchableOpacity style={{
+                    marginLeft: 10,
+                }} onPress={() => navigation.goBack()}>
+                    <Icon name="arrow-back" size={24} color="#111"/>
+                </TouchableOpacity>
+
+            ),
+        });
+    }, [navigation]);
+    const {Moralis} = useMoralis();
 
     const recoveryPhraseText = [
         'Look', 'Remain', 'Seem', 'Smell', 'Sound', 'Stay', 'Taste', 'Was', 'Were', 'Answer', 'Enter', 'Jump'
@@ -30,17 +45,67 @@ const CreateUsername = ({ navigation }) => {
     const newUser = new Moralis.User();
     const [username, setUsername] = useState("");
     const [alreadyTaken, setAlreadyTaken] = useState(false);
+    const [loadingCheck, setLoadingCheck] = useState(false);
 
-    useEffect(() => {setAlreadyTaken(false)},[username])
+    /*    useEffect(() => {
+            setAlreadyTaken(false)
+            setAlreadyTaken(false)
+        }, [username])*/
+
+    /* const checkUsername = useCallback(
+         async () => {
+             setLoadingCheck(true)
+             const params = {userName: username};
+             const user = await Moralis.Cloud.run("checkUser", params);
+             const userObj = user.filter(item => item.attributes.username === username)
+ console.log(!userObj[0].attributes.username)
+             if (!userObj[0].attributes.username) {
+                 setAlreadyTaken(false)
+                 setLoadingCheck(false)
+             } else {
+                 setAlreadyTaken(true)
+                 setLoadingCheck(false)
+             }
+
+
+         },
+         [],
+     );*/
+
+
+    useEffect(() => {
+        (async () => {
+                setLoadingCheck(true)
+                const params = {userName: username};
+                const user = await Moralis.Cloud.run("checkUser", params);
+
+
+                const userObj = await user.filter(item => item.attributes.username === username)
+                console.log(userObj)
+
+
+                if (userObj.length < 1) {
+                    setAlreadyTaken(false)
+                    setLoadingCheck(false)
+                } else if (userObj[0].attributes.username) {
+
+                    setAlreadyTaken(true)
+                    setLoadingCheck(false)
+                }
+
+            }
+        )()
+    }, [username]);
 
 
     const createUser = async () => {
-        const params = { userName: username };
-        const user = await Moralis.Cloud.run("getUser", params);
+        const params = {userName: username};
+        const user = await Moralis.Cloud.run("checkUser", params);
 
+        if (username !== "") {
+            const userObj = user.filter(item => item.attributes.username === username)
 
-        if(username !== "") {
-            if(!user.length > 0) {
+            if (username !== '' && !loadingCheck && !alreadyTaken) {
                 const recoveryPhrase = shuffle(recoveryPhraseText).join(" ");
                 const newAccount = web3Js.eth.accounts.create();
                 const privateKey = newAccount.privateKey;
@@ -52,9 +117,10 @@ const CreateUsername = ({ navigation }) => {
                 newUser.set('recoveryPhrase', recoveryPhrase)
                 newUser.set('ethAddress', ethAddress);
                 newUser.set('keyStore', encryptionKeyStore);
-                await newUser.signUp();
+                // newUser.signUp()
                 nextPage(recoveryPhrase);
-            }else{
+            } else {
+                // nextPage('Visibility');
                 setAlreadyTaken(true)
             }
         }
@@ -66,7 +132,7 @@ const CreateUsername = ({ navigation }) => {
 
     const shuffle = (array) => {
         //we will use this function to shuffle the recovery phrase each time a new user created account
-        let currentIndex = array.length,  randomIndex;
+        let currentIndex = array.length, randomIndex;
 
         while (currentIndex != 0) {
             randomIndex = Math.floor(Math.random() * currentIndex);
@@ -79,41 +145,104 @@ const CreateUsername = ({ navigation }) => {
 
     return (
         <SafeAreaView style={styles.mainBody}>
-            <View style={{flex: 1}}>
-                <Image
-                    source={require('../../../../frontend/create-username.png')}
-                    style={{width: '100%'}}
-                />
+            <KeyboardAwareScrollView
 
-                <View style={styles.headLineContainer}>
-                    <Text style={styles.pickUsernameText}>Pick your username</Text>
-                    <Text style={styles.subText}>This is how other Wallet users can find you and send you payments</Text>
+                scrollEnabled
+                style={{
+                    width: '100%'
+                }}
+                contentContainerStyle={styles.keyboardAvoidingViewStyle}>
+                <View style={{
+
+                    width: '100%',
+
+                    justifyContent: 'flex-start'
+                }}>
+
+
+                    <Image
+                        source={require('../../../../frontend/create-username.png')}
+                        style={{width: '100%'}}
+                    />
+
+                    <View style={styles.headLineContainer}>
+                        <Text style={styles.pickUsernameText}>Pick your username</Text>
+                        <Text style={styles.subText}>This is how other Wallet users can find you and send you
+                            payments</Text>
+                    </View>
                 </View>
 
-                <KeyboardAvoidingView
-                    keyboardVerticalOffset={KEYBOARD_VERTICAL_OFFSET}
-                    behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={styles.keyboardAvoidingViewStyle}>
-                    {alreadyTaken &&
+                <View style={{
+                    width: '100%',
+
+                    height: heightPixel(120),
+                    justifyContent: 'flex-end',
+                    bottom: 0,
+
+                }}>
+
+                    {
+                        username !== '' && loadingCheck &&
+                        <View style={{width: '90%', alignSelf: 'center', flexDirection:'row', marginBottom: 10}}>
+                            <ActivityIndicator size="small" color={"grey"}/>
+                       <Text>
+                           Checking...
+                       </Text>
+                        </View>
+                    }
+
+                    {!loadingCheck && alreadyTaken &&
                         <View style={{width: '90%', alignSelf: 'center', marginBottom: 10}}>
-                            <Text style={{color: 'red'}}>This username is already taken</Text>
+                            <Text style={{color: 'red'}}> Username is taken</Text>
+                        </View>
+                    }
+                    {username !== '' && !loadingCheck && !alreadyTaken &&
+                        <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', marginBottom: 10}}>
+                            <Icon name="checkmark-circle" size={14} color="green"/>
+                            <Text style={{color: 'green'}}> Available</Text>
                         </View>
                     }
                     <View style={styles.formContainer}>
-                        <TouchableOpacity
+                      {/*  <TouchableOpacity
                             disabled={username === "" ? true : false}
                             style={[styles.button, {backgroundColor: username === "" ? 'gray' : '#1652F0'}]}
                             onPress={() => createUser()}>
                             <Text style={styles.buttonText}>Next</Text>
-                        </TouchableOpacity>
+                        </TouchableOpacity>*/}
+                        <View style={{
+                            alignItems: 'center',
+                            width: '10%',
+                            height: '100%',
+                            borderRadius: 20,
+                            justifyContent: 'center',
+                            left: 10,
+                        }}>
+
+
+                            <Text style={{
+                                color: '#8e8e8e',
+                                fontWeight: '400',
+                                fontSize: fontPixel(14)
+                            }}>
+                                @
+                            </Text>
+                        </View>
                         <TextInput
+                            focusable={true}
+                            autoFocus
+                            defaultValue={username}
                             style={styles.inputStyle}
-                            placeholder="@"
+                            returnKeyType="done"
+                            returnKeyLabel="Done"
+                            onSubmitEditing={createUser}
                             onChangeText={(e) => setUsername(e)}
                         />
+
                     </View>
-                </KeyboardAvoidingView>
-            </View>
+
+                </View>
+            </KeyboardAwareScrollView>
+
         </SafeAreaView>
     );
 };
@@ -140,22 +269,23 @@ const styles = StyleSheet.create({
     formContainer: {
         flexDirection: 'row',
         width: '90%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        justifyContent: 'space-evenly',
+        backgroundColor: '#F7F8FA',
+        height: heightPixel(60)
     },
     mainBody: {
         flex: 1,
-        justifyContent: "center",
         backgroundColor: "white",
         alignContent: "center",
     },
     headLineContainer: {
         marginLeft: 25,
-        marginTop:30
+        marginTop: 30
     },
     inputStyle: {
         width: '100%',
         height: 50,
-        backgroundColor: '#F7F8FA',
         alignSelf: 'center',
         borderRadius: 5,
         paddingLeft: 20
@@ -171,8 +301,10 @@ const styles = StyleSheet.create({
         marginTop: 15
     },
     keyboardAvoidingViewStyle: {
-        position: 'absolute',
-        bottom: 45,
-        width: '100%'
+
+        flex: 1,
+        width: '100%',
+        alignItems: 'center',
+
     }
 });

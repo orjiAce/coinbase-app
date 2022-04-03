@@ -9,6 +9,7 @@ import CreateUsername from "./Components/CoinbaseClone/onboarding/CreateUsername
 import RecoveryPhrase from "./Components/CoinbaseClone/onboarding/RecoveryPhrase";
 import Dashboard from "./Components/CoinbaseClone/DashBoard";
 import LegalScreen from "./Components/CoinbaseClone/onboarding/LegalScreen";
+import VisibilityScreen from "./Components/CoinbaseClone/onboarding/VisibilityScreen";
 
 const Stack = createStackNavigator();
 
@@ -49,6 +50,19 @@ function App(): JSX.Element {
                 />
                 <Stack.Screen name={'LegalScreen'}
                               component={LegalScreen}
+                              options={{
+                                  headerShown: true, title: '',
+                                  headerBackTitle: '',
+                                  headerBackTitleStyle: {
+                                      color: '#111',
+
+                                  }, headerStyle: {
+                                      shadowColor: 'transparent',
+                                  }, headerTitle: ''
+                              }}
+                />
+                <Stack.Screen name={'VisibilityScreen'}
+                              component={VisibilityScreen}
                               options={{
                                   headerShown: true, title: '',
                                   headerBackTitle: '',

@@ -10,6 +10,7 @@ import RecoveryPhrase from "./Components/CoinbaseClone/onboarding/RecoveryPhrase
 import Dashboard from "./Components/CoinbaseClone/DashBoard";
 import LegalScreen from "./Components/CoinbaseClone/onboarding/LegalScreen";
 import VisibilityScreen from "./Components/CoinbaseClone/onboarding/VisibilityScreen";
+import BiometricsScreen from "./Components/CoinbaseClone/onboarding/BiometricScreen";
 
 const Stack = createStackNavigator();
 
@@ -69,6 +70,18 @@ function App(): JSX.Element {
                                   headerBackTitleStyle: {
                                       color: '#111',
 
+                                  }, headerStyle: {
+                                      shadowColor: 'transparent',
+                                  }, headerTitle: ''
+                              }}
+                />
+                <Stack.Screen name={'BiometricsScreen'}
+                              component={BiometricsScreen}
+                              options={{
+                                  headerShown: true, title: '',
+                                  headerBackTitle: '',
+                                  headerBackTitleStyle: {
+                                      color: '#111',
                                   }, headerStyle: {
                                       shadowColor: 'transparent',
                                   }, headerTitle: ''

@@ -5,10 +5,28 @@ import Colors from '../../../constants/Colors'
 import Icon from 'react-native-vector-icons/Ionicons';
 
 
-const VisibilityScreen = ({navigation}) => {
+interface NavigationProps{
+    navigation?:{
+        goBack: () => void,
+        navigate: (screen:string) => void,
+        push: (screen:string,{}) => void,
+        setOptions: (options:any) => void
+    },
+    routes?:{
+        params:any
+    }
+}
+
+const VisibilityScreen = ({navigation}:NavigationProps) => {
 
     const [visibility, setSetVisibility] = useState('public');
 
+
+      const nextPage = () => {
+        navigation.push("BiometricsScreen", {
+            visibility
+        });
+    }
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -22,6 +40,8 @@ const VisibilityScreen = ({navigation}) => {
             ),
         });
     }, [navigation]);
+
+
     return (
         <SafeAreaView style={styles.mainBody}>
             <ScrollView scrollEnabled showsVerticalScrollIndicator={false} style={{
@@ -38,6 +58,7 @@ const VisibilityScreen = ({navigation}) => {
             }}>
 
             </View>
+
 
             <View style={{
 
@@ -122,7 +143,7 @@ const VisibilityScreen = ({navigation}) => {
             </View>
          </ScrollView>
 
-            <TouchableOpacity>
+            <TouchableOpacity onPress={nextPage}>
                 <View style={styles.buttonNext}>
                     <Text style={{
                         color:"#fff",

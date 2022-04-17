@@ -184,7 +184,7 @@ const CreateUsername = ({navigation}) => {
                     {
                         username !== '' && loadingCheck &&
                         <View style={{width: '90%', alignSelf: 'center', flexDirection:'row', marginBottom: 10}}>
-                            <ActivityIndicator size="small" color={"grey"}/>
+                            <ActivityIndicator size="small" color={"#3AB795"}/>
                        <Text>
                            Checking...
                        </Text>
@@ -198,7 +198,7 @@ const CreateUsername = ({navigation}) => {
                     }
                     {username !== '' && !loadingCheck && !alreadyTaken &&
                         <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', marginBottom: 10}}>
-                            <Icon name="checkmark-circle" size={14} color="green"/>
+                            <Icon name="checkmark-circle" size={14} color="#3AB795"/>
                             <Text style={{color: 'green'}}> Available</Text>
                         </View>
                     }

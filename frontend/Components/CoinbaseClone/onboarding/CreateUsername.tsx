@@ -14,7 +14,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import {
     useMoralis,
 } from "react-moralis";
-
+import Colors from '../../../constants/Colors'
 const KEYBOARD_VERTICAL_OFFSET = 60 + StatusBar.currentHeight;
 
 import Web3 from "web3";
@@ -118,7 +118,7 @@ const CreateUsername = ({navigation}) => {
                 newUser.set('ethAddress', ethAddress);
                 newUser.set('keyStore', encryptionKeyStore);
                 // newUser.signUp()
-                nextPage(recoveryPhrase);
+                nextPage(username);
             } else {
                 // nextPage('Visibility');
                 setAlreadyTaken(true)
@@ -126,8 +126,13 @@ const CreateUsername = ({navigation}) => {
         }
     }
 
-    const nextPage = (recoveryPhrase) => {
+    /*const nextPage = (recoveryPhrase) => {
         navigation.push("RecoveryPhrase", {recoveryPhrase: recoveryPhrase});
+    } */
+    const nextPage = (userName) => {
+        navigation.push("VisibilityScreen", {
+            userName
+        });
     }
 
     const shuffle = (array) => {
@@ -153,9 +158,7 @@ const CreateUsername = ({navigation}) => {
                 }}
                 contentContainerStyle={styles.keyboardAvoidingViewStyle}>
                 <View style={{
-
                     width: '100%',
-
                     justifyContent: 'flex-start'
                 }}>
 
@@ -174,34 +177,14 @@ const CreateUsername = ({navigation}) => {
 
                 <View style={{
                     width: '100%',
-
                     height: heightPixel(120),
                     justifyContent: 'flex-end',
                     bottom: 0,
 
                 }}>
 
-                    {
-                        username !== '' && loadingCheck &&
-                        <View style={{width: '90%', alignSelf: 'center', flexDirection:'row', marginBottom: 10}}>
-                            <ActivityIndicator size="small" color={"#3AB795"}/>
-                       <Text>
-                           Checking...
-                       </Text>
-                        </View>
-                    }
 
-                    {!loadingCheck && alreadyTaken &&
-                        <View style={{width: '90%', alignSelf: 'center', marginBottom: 10}}>
-                            <Text style={{color: 'red'}}> Username is taken</Text>
-                        </View>
-                    }
-                    {username !== '' && !loadingCheck && !alreadyTaken &&
-                        <View style={{width: '90%', alignSelf: 'center', flexDirection: 'row', marginBottom: 10}}>
-                            <Icon name="checkmark-circle" size={14} color="#3AB795"/>
-                            <Text style={{color: 'green'}}> Available</Text>
-                        </View>
-                    }
+
                     <View style={styles.formContainer}>
                       {/*  <TouchableOpacity
                             disabled={username === "" ? true : false}
@@ -209,14 +192,7 @@ const CreateUsername = ({navigation}) => {
                             onPress={() => createUser()}>
                             <Text style={styles.buttonText}>Next</Text>
                         </TouchableOpacity>*/}
-                        <View style={{
-                            alignItems: 'center',
-                            width: '10%',
-                            height: '100%',
-                            borderRadius: 20,
-                            justifyContent: 'center',
-                            left: 10,
-                        }}>
+                        <View style={styles.charWrap}>
 
 
                             <Text style={{
@@ -240,6 +216,32 @@ const CreateUsername = ({navigation}) => {
 
                     </View>
 
+                    {
+                        username !== '' && loadingCheck &&
+                        <View style={{width: '90%',marginLeft:20, marginTop:12, alignItems: 'center', flexDirection:'row', marginBottom: 10}}>
+                            <ActivityIndicator size="small" color={Colors.greyColor}/>
+                       <Text style={{
+                           fontFamily:'DaxlinePro-Medium',
+                           fontSize:12,
+                       }}>
+                           Checking...
+                       </Text>
+                        </View>
+                    }
+
+
+                     {!loadingCheck && alreadyTaken &&
+                        <View style={{width: '90%', marginLeft:20, marginTop:12, alignItems: 'center',  flexDirection: 'row',marginBottom: 10}}>
+                              <Icon name="close-circle" size={14} color="red"/>
+                            <Text style={{color: 'red'}}> Username is taken</Text>
+                        </View>
+                    }
+      {username !== '' && !loadingCheck && !alreadyTaken &&
+                        <View style={{width: '80%', marginLeft:20,  marginTop:12, alignItems: 'center', flexDirection: 'row', marginBottom: 10}}>
+                            <Icon name="checkmark-circle" size={14} color="#3AB795"/>
+                            <Text style={{color: '#3AB795',       fontFamily:'DaxlinePro-Bold'}}> Available</Text>
+                        </View>
+                    }
                 </View>
             </KeyboardAwareScrollView>
 
@@ -291,11 +293,13 @@ const styles = StyleSheet.create({
         paddingLeft: 20
     },
     pickUsernameText: {
-        fontFamily: 'Helvetica Neue',
+        fontFamily: 'DaxlinePro-Bold',
         fontWeight: '700',
         fontSize: 20
     },
     subText: {
+        lineHeight:20,
+            fontFamily: 'DaxlinePro-Medium',
         fontSize: 13,
         color: "rgba(0, 0, 0, 0.5)",
         marginTop: 15
@@ -306,5 +310,13 @@ const styles = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
 
+    },
+    charWrap:{
+         alignItems: 'center',
+                            width: '10%',
+                            height: '100%',
+                            borderRadius: 20,
+                            justifyContent: 'center',
+                            left: 10,
     }
 });

@@ -55,6 +55,11 @@
 		<string>Octicons.ttf</string>
 		<string>SimpleLineIcons.ttf</string>
 		<string>Zocial.ttf</string>
+		<string>DaxlinePro-Bold.otf</string>
+		<string>DaxlinePro-ExtraBold.otf</string>
+		<string>DaxlinePro-Light.otf</string>
+		<string>DaxlinePro-Medium.otf</string>
+		<string>DaxlinePro-Regular.otf</string>
 	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
